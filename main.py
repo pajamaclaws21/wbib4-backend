@@ -71,7 +71,7 @@ def access(url, id, redirectNum=0):
         # understand the response
         status = int(content.split(" ")[1][0])
         if status == 3:
-            return URLrequest(content.split("\r\n")[5].split("Location: ")[1], redirectNum + 1)
+            return access(content.split("\r\n")[5].split("Location: ")[1], redirectNum + 1)
         
         currentRequests.remove(id)
         return content
