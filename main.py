@@ -69,10 +69,9 @@ def access(url, id, redirectNum=0):
         s.close()
     
         # understand the response.
-        # FRANKLY... re-requesting content if we get a redirect can be done client-side
-        # and when i tried this i got a list index error
-        #status = int(content.split(" ")[1][0])
-        #if status == 3:
+        status = int(content.split(" ")[1][0])
+        if status == 3:
+            return content
         #    return access(content.split("\r\n")[5].split("Location: ")[1], redirectNum + 1)
         
         currentRequests.remove(id)
