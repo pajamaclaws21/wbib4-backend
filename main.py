@@ -5,27 +5,36 @@ import time
 import urllib.parse
 import base64
 
+from flask_cors import CORS
 from flask import Flask, abort
 app = Flask(__name__)
+# only allow the backend to be accessed from my website.
+# built with https://regex101.com. would encourage you do this too
+CORS(app, origins=r"https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
 
+# self-explanatory
 def randomRequestID():
+    # adding the string in front makes sure this is a string
     id = "pjweb-"
     chars = list("qwertyuiopasdfghjklzxcvbnm1234567890")
     for n in range(0, 17):
         id += chars[random.randrange(0, len(chars))]
     return id
 
+# self-explanatory; keeps track of all of the current request IDs that have been requested
 currentRequests = []
 
+# give out an id
 @app.route("/")
 def index():
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
     return thisRequestID
 
-# from https://browser.engineering/http.html
+# built from https://browser.engineering/http.html
 @app.route("/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
+    # you must have previously requested the root to get a request ID in order to access a site
     if id in currentRequests:
         # if we've followed more than five redirects, give up
         if redirectNum > 5:
