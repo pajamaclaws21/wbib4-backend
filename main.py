@@ -8,47 +8,65 @@ import base64
 from flask_cors import CORS
 from flask import Flask, abort
 app = Flask(__name__)
-# only allow the backend to be accessed from my website.
-# built with https://regex101.com. would encourage you do this too
-CORS(app, origins=r"https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
+#CORS(app, origins="https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
 
-# self-explanatory
 def randomRequestID():
-    # adding the string in front makes sure this is a string
     id = "pjweb-"
     chars = list("qwertyuiopasdfghjklzxcvbnm1234567890")
     for n in range(0, 17):
         id += chars[random.randrange(0, len(chars))]
     return id
 
-# self-explanatory; keeps track of all of the current request IDs that have been requested
+def formatUrl(url):
+    if "://" not in url or "http" not in url:
+        raise Error("url passed to formatter needs a scheme (http/s). Typo?")
+    scheme = url.split("://")[0]
+    if url[len(url) - 1] != "/":
+        url += "/"
+    url = url.split(f"{scheme}://")[1].split("/")
+    return f"{scheme}|{'|'.join(url)}"
+
+def unformUrl(url):
+    if "|" not in url:
+        raise Error("this url looks unformatted (does not have |). Typo?")
+    if "http" not in url:
+        raise Error("url passed needs a scheme (http/s). Typo?")
+    url = url.split("|")
+    url = f"{url[0]}://{'/'.join(url[1:])}"
+    if url[len(url) - 1] != "/":
+        url += "/"
+    return url
+    
 currentRequests = []
 
-# give out an id
 @app.route("/")
 def index():
+    return app.send_static_file(filename="index.html")
+
+@app.route("/id")
+def deliverId():
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
     return thisRequestID
 
-# built from https://browser.engineering/http.html
+# base from https://browser.engineering/http.html
 @app.route("/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
-    # you must have previously requested the root to get a request ID in order to access a site
     if id in currentRequests:
         # if we've followed more than five redirects, give up
         if redirectNum > 5:
             return "Gave up following redirects"
-    
-        url = urllib.parse.urlsplit(base64.b64decode(url))  # get the parts of the url
-        request = f"GET {url.path.decode('utf-8')} HTTP/1.1\r\nHost: {url.hostname.decode('utf-8')}\r\nConnection: close\r\nUser-agent: pjwbib4\r\n\r\n"
+        
+        url = urllib.parse.urlsplit(unformUrl(url))  # get the parts of the url
+
+        request = "\r\n".join([f"GET {url.path} HTTP/1.0", "User-Agent: pjwbib4", "Connection: close", f"Host: {url.hostname}", "\r\n"])
 
         s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP)  # open socket
     
         # decide what port to listen to
-        if url.scheme == b'http':
+        if url.scheme == "http":
             port = 80
-        elif url.scheme == b'https':
+        elif url.scheme == "https":
             port = 443
 
         # if the url has a port in it, decide that port instead
@@ -58,7 +76,7 @@ def access(url, id, redirectNum=0):
         # open the socket
         s.connect((url.hostname, port))
         # if it's https, use ssl
-        if url.scheme == b'https':
+        if url.scheme == "https":
             ctx = ssl.create_default_context()
             s = ctx.wrap_socket(s, server_hostname=url.hostname)
             # build the request & send it
@@ -67,14 +85,41 @@ def access(url, id, redirectNum=0):
         response = s.makefile("r", encoding="utf8", newline="\r\n")
         content = response.read()
         s.close()
-    
-        # understand the response.
-        status = int(content.split(" ")[1][0])
-        if status == 3:
-            return content
-        #    return access(content.split("\r\n")[5].split("Location: ")[1], redirectNum + 1)
+
+
+        # allows us to better understand content
+        content = content.split("\r\n")
+
+        httpDict = {}
+        finalReturn = []
+
+        for item in content:
+            index = content.index(item)
+            if ": " in item and index != len(content) - 1:
+                # adds response data to a dictionary
+                item = item.split(": ")
+                key = item[0]
+                value = item[1]
+                httpDict[key] = value
+            elif "HTTP/" in item:
+                # adds data about response to output: HTTP version, status code, status name
+                finalReturn.append([item[:8], item.split(" ")[1], item[13:]])
+            elif item != "":
+                # add all non-empty items to final value
+                finalReturn.append(item)
+
+        # makes setup of list as follows: HTTP version/code/name, response data, response body
+        finalReturn.insert(1, httpDict)
         
+        # checks that the status code is not a redirect
+        if finalReturn[0][1][0] == "3":
+            try:
+                location = httpDict["location"]
+            except:
+                location = httpDict["Location"]
+
+            return access(formatUrl(location), id, redirectNum+1)
         currentRequests.remove(id)
-        return content
+        return finalReturn
     else:
         abort(401)
