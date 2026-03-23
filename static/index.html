@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WBIB4 Backend</title>
+</head>
+<body>
+<h1>WBIB4 Backend: API Reference</h1>
+
+<b>GET /</b> <br>
+Access this page
+
+<br><br>
+
+<b>GET /id</b> <br>
+Obtain a Request ID, needed for /access <br>
+
+<br><br>
+
+<b>GET /access/str:url/str:id</b> <br>
+HTTP request a given website. The URL must be properly formatted; see below. The ID must be obtained from /id.
+
+<br><br>
+
+<input id="urlExample" placeholder="https://example.com"><button onclick="document.getElementById('urlFinal').innerText = formatUrl(document.getElementById('urlExample').value)">Format</button>
+<p id="urlFinal">Formatted URL will appear here...</p>
+
+<script>
+function formatUrl(url){
+if(!( url.includes("://") || url.includes("http") )){
+alert("url passed to formatter needs a scheme (http/s). Typo?");
+} else {
+if(url[url.length - 1] != "/"){
+url+="/";
+};
+var scheme = url.split("://")[0];
+url = url.split(`${scheme}://`)[1].split("/");
+return `${scheme}|${url.join("|")}`;
+};
+};
+</script>
+
+</body>
+</html>
