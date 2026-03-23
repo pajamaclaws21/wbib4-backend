@@ -41,7 +41,7 @@ def access(url, id, redirectNum=0):
             return "Gave up following redirects"
     
         url = urllib.parse.urlsplit(base64.b64decode(url))  # get the parts of the url
-        request = f"GET {url.path.decode('utf-8')} HTTP/1.0\r\nHost: {url.hostname.decode('utf-8')}\r\n\r\n"
+        request = f"GET {url.path.decode('utf-8')} HTTP/1.1\r\nHost: {url.hostname.decode('utf-8')}\r\nConnection: close\r\nUser-agent: pjwbib4\r\n\r\n"
 
         s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP)  # open socket
     
