@@ -8,7 +8,7 @@ import base64
 from flask_cors import CORS
 from flask import Flask, abort
 app = Flask(__name__)
-#CORS(app, origins="https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
+CORS(app, origins=r"https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
 
 def randomRequestID():
     id = "pjweb-"
