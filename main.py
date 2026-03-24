@@ -5,10 +5,10 @@ import time
 import urllib.parse
 import base64
 
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask import Flask, abort
 app = Flask(__name__)
-CORS(app, origins=r"https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
+CORS(app, resources=r"/api/*", origins=r"https:\/\/(www.)?pajamaclaws\.net(\/.*)?")
 
 def randomRequestID():
     id = "pjweb-"
@@ -43,14 +43,14 @@ currentRequests = []
 def index():
     return app.send_static_file(filename="index.html")
 
-@app.route("/id")
+@app.route("/api/id")
 def deliverId():
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
     return thisRequestID
 
 # base from https://browser.engineering/http.html
-@app.route("/access/<string:url>/<string:id>")
+@app.route("/api/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
     if id in currentRequests:
         # if we've followed more than five redirects, give up
