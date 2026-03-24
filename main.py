@@ -54,20 +54,20 @@ def index():
 def howto():
     return app.send_static_file(filename="howto.html")
 
-@app.route("/api/id")
-def deliverId():
-    if not request.headers.get('origin') in allowedOrigins:
-        abort(401)
-    thisRequestID = randomRequestID()
-    currentRequests.append(thisRequestID)
-    return thisRequestID
+#@app.route("/api/id")
+#def deliverId():
+#    if not request.headers.get('origin') in allowedOrigins:
+#        abort(401)
+#    thisRequestID = randomRequestID()
+#    currentRequests.append(thisRequestID)
+#    return thisRequestID
 
 # base from https://browser.engineering/http.html
 @app.route("/api/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
     if not request.headers.get('origin') in allowedOrigins:
         abort(401)
-    if id in currentRequests:
+    if id: #in currentRequests:
         # if we've followed more than five redirects, give up
         if redirectNum > 5:
             return "Gave up following redirects"
@@ -134,7 +134,7 @@ def access(url, id, redirectNum=0):
                 location = httpDict["Location"]
 
             return access(formatUrl(location), id, redirectNum+1)
-        currentRequests.remove(id)
+        #currentRequests.remove(id)
         return finalReturn
     else:
         abort(401)
