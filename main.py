@@ -6,14 +6,15 @@ import urllib.parse
 import base64
 
 from flask_cors import CORS, cross_origin
-from flask import Flask, abort
+from flask import Flask, abort, request
 app = Flask(__name__)
-CORS(app, origins=["https://pajamaclaws.net", "https://www.pajamaclaws.net"])
+allowedOrigins = ["https://pajamaclaws.net", "https://www.pajamaclaws.net"]
+CORS(app, origins=allowedOrigins)
 
 def randomRequestID():
     id = "pjweb-"
     chars = list("qwertyuiopasdfghjklzxcvbnm1234567890")
-    for n in range(0, 17):
+    for n in range(0, 20):
         id += chars[random.randrange(0, len(chars))]
     return id
 
@@ -45,6 +46,8 @@ def index():
 
 @app.route("/api/id")
 def deliverId():
+    if not request.headers.get('origin') in allowedOrigins:
+        abort(401)
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
     return thisRequestID
@@ -52,6 +55,8 @@ def deliverId():
 # base from https://browser.engineering/http.html
 @app.route("/api/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
+    if not request.headers.get('origin') in allowedOrigins:
+        abort(401)
     if id in currentRequests:
         # if we've followed more than five redirects, give up
         if redirectNum > 5:
