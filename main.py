@@ -8,13 +8,19 @@ import base64
 from flask_cors import CORS, cross_origin
 from flask import Flask, abort, request
 app = Flask(__name__)
+uaProduct = "WBIB4"
+uaVersion = "0.9"
+
+# if you are forking: CHANGE THESE!!
 allowedOrigins = ["https://pajamaclaws.net", "https://www.pajamaclaws.net"]
+userAgent = "pajamaclaws-net"
+
 CORS(app, origins=allowedOrigins)
 
 def randomRequestID():
-    id = "pjweb-"
+    id = "a"
     chars = list("qwertyuiopasdfghjklzxcvbnm1234567890")
-    for n in range(0, 20):
+    for n in range(0, 25):
         id += chars[random.randrange(0, len(chars))]
     return id
 
@@ -44,6 +50,10 @@ currentRequests = []
 def index():
     return app.send_static_file(filename="index.html")
 
+@app.route("/howto")
+def howto():
+    return app.send_static_file(filename="howto.html")
+
 @app.route("/api/id")
 def deliverId():
     if not request.headers.get('origin') in allowedOrigins:
@@ -64,7 +74,7 @@ def access(url, id, redirectNum=0):
         
         url = urllib.parse.urlsplit(unformUrl(url))  # get the parts of the url
 
-        request = "\r\n".join([f"GET {url.path} HTTP/1.0", "User-Agent: pjwbib4", "Connection: close", f"Host: {url.hostname}", "\r\n"])
+        request = "\r\n".join([f"GET {url.path} HTTP/1.0", f"User-Agent: {uaProduct}/{uaVersion} {userAgent}", "Connection: close", "X-Powered-By: wbib4", f"Host: {url.hostname}", "\r\n"])
 
         s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP)  # open socket
     

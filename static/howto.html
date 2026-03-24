@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>How to</title>
+</head>
+<body>
+<h1>How to</h1>
+Primarily, I'd strongly recommend reading the docs from
+<a href="https://browser.engineering/http.html">browser.engineering</a>. That is where
+I got most of the design inspiration from. There aren't many things you need to change; this
+is pretty drag-and-drop; but two things stick out.
+
+<br>
+
+<ul>
+<li><b>allowedOrigins:</b> the way the app is set up now, if an origin that is not on this list makes an api call,
+       they recieve an error 401. please change this to your desired origins.</li>
+<li><b>user-agent:</b> self-explanatory. Please change the userAgent variable to something different than
+       "pajamaclaws-net"!!!</li>
+<li><b>OVERALL:</b> I do believe I learned a decent amount making this project. However, younger me would've just
+       forked the app and deployed it without making the changes or really understanding what the code did. so
+       yeah if you identify with that i'd recommend reading the code. I really am still learning abt this too</li>
+<li style="color: red"><b>MASSIVE CHANGES:</b> if you are making <b>massive changes</b>, please also change
+       the uaName variable to your project name, and the uaVersion variable to your project version. I am trying
+       to make it as easy as possible for sites&servers to distinguish between different forks.</li>
+<li><b>On that note:</b> if you make a cool fork and you think the features should be in the main please make
+       a pull request!! I would be delighted!</li>
+</ul>
+
+</body>
+</html>
