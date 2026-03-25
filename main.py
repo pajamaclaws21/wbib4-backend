@@ -56,7 +56,7 @@ def howto():
 
 @app.route("/api/id")
 def deliverId():
-    if not request.headers.get('origin') in allowedOrigins:
+    if not flask.request.headers.get('origin') in allowedOrigins:
         abort(401)
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
@@ -65,7 +65,7 @@ def deliverId():
 # base from https://browser.engineering/http.html
 @app.route("/api/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
-    if not request.headers.get('origin') in allowedOrigins:
+    if not flask.request.headers.get('origin') in allowedOrigins:
         abort(401)
     if id in currentRequests:
         # if we've followed more than five redirects, give up
