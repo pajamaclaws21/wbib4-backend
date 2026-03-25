@@ -3,11 +3,10 @@ import socket
 import ssl
 import time
 import urllib.parse
-import base64
-
+import flask
 from flask_cors import CORS, cross_origin
-from flask import Flask, abort, request
-app = Flask(__name__)
+
+app = flask.Flask(__name__)
 uaProduct = "WBIB4"
 uaVersion = "0.9"
 
@@ -57,7 +56,7 @@ def howto():
 @app.route("/api/id")
 def deliverId():
     if not flask.request.headers.get('origin') in allowedOrigins:
-        abort(401)
+        flask.abort(401)
     thisRequestID = randomRequestID()
     currentRequests.append(thisRequestID)
     return thisRequestID
@@ -66,7 +65,7 @@ def deliverId():
 @app.route("/api/access/<string:url>/<string:id>")
 def access(url, id, redirectNum=0):
     if not flask.request.headers.get('origin') in allowedOrigins:
-        abort(401)
+        flask.abort(401)
     if id in currentRequests:
         # if we've followed more than five redirects, give up
         if redirectNum > 5:
@@ -137,4 +136,4 @@ def access(url, id, redirectNum=0):
         currentRequests.remove(id)
         return finalReturn
     else:
-        abort(401)
+        flask.abort(401)
