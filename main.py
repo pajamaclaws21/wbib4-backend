@@ -112,6 +112,6 @@ def access(url, redirectNum=0):
         except:
             location = httpDict["Location"]
 
-        return access(formatUrl(location), id, redirectNum+1)
+        return access(formatUrl(location), redirectNum+1)
     
     return finalReturn
