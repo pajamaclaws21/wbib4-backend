@@ -19,6 +19,11 @@ How to make your own
 <b>GET /api/access/str:url</b> <br>
 HTTP request a given website. The URL must be properly formatted; see below. 401 means either origin not allowed. A successful result returns the following array, in JSON: <b>[[status], {response headers}, ...]</b>. The result array may be of arbitrary length, with the rest of the items of the array being elements separated by \r\n in the response. Usually, the third item will be the raw HTML of a page.
 
+<br><br>
+
+<b>GET /api/raw/str:url</b> <br>
+Same as /api/access, but strips result array and simply returns the plaintext of the HTML. <b>This obviously will break some responses.</b>
+
 <input id="urlExample" placeholder="https://example.com"><button onclick="document.getElementById('urlFinal').innerText = formatUrl(document.getElementById('urlExample').value)">Format</button>
 <p id="urlFinal">Formatted URL will appear here...</p>
 

@@ -115,3 +115,7 @@ def access(url, redirectNum=0):
         return access(formatUrl(location), redirectNum+1)
     
     return finalReturn
+
+@app.route("/api/raw/<string:url>")
+def accessRaw(url):
+    return access(url)[2]
