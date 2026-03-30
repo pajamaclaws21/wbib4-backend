@@ -29,16 +29,16 @@ Same as /api/access, but strips result array and simply returns the plaintext of
 
 <script>
 function formatUrl(url){
-if(!( url.includes("://") || url.includes("http") )){
-alert("url passed to formatter needs a scheme (http/s). Typo?");
-} else {
-if(url[url.length - 1] != "/"){
-url+="/";
-};
-var scheme = url.split("://")[0];
-url = url.split(`${scheme}://`)[1].split("/");
-return `${scheme}|${url.join("|")}`;
-};
+  if(!( url.includes("://") || url.includes("http") )){
+    throw new Error("url passed to formatter needs a scheme (http/s). Typo?");
+  } else {
+    if( url[url.length - 1] != "/" ){
+      url+="/";
+    };
+    var scheme = url.split("://")[0];
+    url = url.split(`${scheme}://`)[1].split("/");
+    return `${scheme}|${url.join("|")}`;
+  };
 };
 </script>
 
