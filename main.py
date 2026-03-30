@@ -20,8 +20,8 @@ def formatUrl(url):
     if "://" not in url or "http" not in url:
         raise Error("url passed to formatter needs a scheme (http/s). Typo?")
     scheme = url.split("://")[0]
-    if url[len(url) - 1] != "/":
-        url += "/"
+    #if url[len(url) - 1] != "/":
+    #    url += "/"
     url = url.split(f"{scheme}://")[1].split("/")
     return f"{scheme}|{'|'.join(url)}"
 
@@ -32,8 +32,8 @@ def unformUrl(url):
         raise Error("url passed needs a scheme (http/s). Typo?")
     url = url.split("|")
     url = f"{url[0]}://{'/'.join(url[1:])}"
-    if url[len(url) - 1] != "/":
-        url += "/"
+    #if url[len(url) - 1] != "/":
+    #    url += "/"
     return url
 
 @app.route("/")
