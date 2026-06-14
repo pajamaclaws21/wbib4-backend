@@ -47,8 +47,8 @@ def howto():
 # base from https://browser.engineering/http.html
 @app.route("/api/access/<string:url>")
 def access(url, redirectNum=0):
-    if not flask.request.headers.get('origin') in allowedOrigins:
-        flask.abort(401)
+    #if not flask.request.headers.get('origin') in allowedOrigins:
+    #    flask.abort(401)
 
     # if we've followed more than five redirects, give up
     if redirectNum > 5:

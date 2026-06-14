@@ -24,6 +24,8 @@ HTTP request a given website. The URL must be properly formatted; see below. 401
 <b>GET /api/raw/str:url</b> <br>
 Same as /api/access, but strips result array and simply returns the plaintext of the HTML. <b>This obviously will break some responses.</b>
 
+<br><br>
+
 <input id="urlExample" placeholder="https://example.com"><button onclick="document.getElementById('urlFinal').innerText = formatUrl(document.getElementById('urlExample').value)">Format</button>
 <p id="urlFinal">Formatted URL will appear here...</p>
 
